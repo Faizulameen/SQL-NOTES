@@ -1,0 +1,359 @@
+create database test;
+use test;
+select database();
+
+create table cats (name varchar(100),age int)
+show columns from cats;
+
+INSERT INTO cats(name, age) values("Jetson",2)
+
+select * from cats where age between 2 and 5 order by age asc;
+select * from cats where name="Jetson";
+select name,age from cats;
+
+insert into cats(age, name) values(7,"faizul");
+
+-- Two creation
+insert into cats(age, name) values(3,"ameen"),(4,"rasith");
+
+insert into cats values("hanifa",9);
+
+-- Not null added
+create table cats2 (name varchar(20) not null,age int not null);
+
+-- default value
+create table cats3(name varchar(20),age int default 99);
+CREATE TABLE cats4  (    
+    name VARCHAR(20) NOT NULL DEFAULT 'unnamed',    
+    age INT NOT NULL DEFAULT 99 
+);
+
+-- Adding primary key
+create table u_cats(catId int not null primary key,name varchar(2));
+
+-- Adding auto increment
+create table unique_cats(catId int not null primary key auto_increment,name varchar(2))
+
+-- count 
+select count(*) from cats;
+
+--Ascending
+select age from cats order by age ASC;
+
+--where
+select name as Name,age from cats where name="Ringo";
+
+--Alias
+as name column name changes
+
+--Update record
+update cats set name="rasith" where age=4;
+
+--Delete record
+delete from cats where name="jackson";
+
+--concat
+select concat('h','e')
+select concat(name,age) as NAMEAGE from cats2;
+select concat(name,' ',age) as NAMEAGE from cats2;
+
+--substring
+select substring("hi im faizu",2);
+select substring("hi im faizu",2,4);    -- 2 is a string point 4 is the ending point
+
+--replace
+ select replace("hello world","hello","hi");
+ 
+--reverse
+select reverse("hello world");
+
+--char_length
+select char_length("hello world");
+
+--upper case and lower case
+ select upper("hello world");
+  select lower("hello world");
+  
+ --insert middle
+ select insert("hi im faizu",6,0,"hi")
+ 
+ --left char and right char
+ select left("hi im faizu",2)
+select right("hi im faizu",2)
+
+--repeat
+select repeat("hi im faizu",2);
+
+--trim space removed
+select trim("  hi    ");
+
+-- duplicate only uniq will show
+select distinct author_lname from books;
+
+-- limit so first 2 record it will come
+select * from books limit 2;
+select * from books limit 1,2;
+
+-- searching record using like
+select * from books where title like "%hap%";
+select * from books where title like "____"; exject 4 char title will come
+select * from books where title like "_a_"; second letter is a wil come
+
+Aggregate function:
+Count,group by,order by,min,max
+
+select count(distinct(author_lname)) as count from books;
+select author_lname,count(*) from books group by author_lname;
+select author_lname,count(*) from books group by author_lname order by author_lname desc;
+select max(pages) from books;
+select min(pages) from books;
+
+-- aggragate function work with subquery
+select title,pages from books where pages = (select max(pages) from books);
+
+-- multiple group by
+ select author_fname,author_lname from books group by author_fname,author_lname;
+
+-- Find author first released book
+select min(released_year),author_lname from books group by author_lname;
+
+-- sum
+select sum(pages) from books;
+select author_lname,sum(pages) from books group by author_lname;
+
+--average
+select avg(pages) from books;
+
+--Date and Time and DateTime code
+CREATE TABLE people (
+	name VARCHAR(100),
+    birthdate DATE,
+    birthtime TIME,
+    birthdt DATETIME
+);
+ 
+INSERT INTO people (name, birthdate, birthtime, birthdt)
+VALUES ('Elton', '2000-12-25', '11:00:00', '2000-12-25 11:00:00');
+ 
+INSERT INTO people (name, birthdate, birthtime, birthdt)
+VALUES ('Lulu', '1985-04-11', '9:45:10', '1985-04-11 9:45:10');
+ 
+INSERT INTO people (name, birthdate, birthtime, birthdt)
+VALUES ('Juan', '2020-08-15', '23:59:00', '2020-08-15 23:59:00');
+
+
+Timestamp
+CREATE TABLE captions2 (
+  text VARCHAR(150),
+  created_at TIMESTAMP default CURRENT_TIMESTAMP,
+  updated_at TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+);
+
+--UNIQUE Contraint, Check Contraint
+CREATE TABLE users (
+	username VARCHAR(20) NOT NULL,
+    age INT CHECK (age > 0)
+);
+
+
+--naming contraint
+CREATE TABLE users2 (
+    username VARCHAR(20) NOT NULL,
+    age INT,
+    CONSTRAINT age_not_negative CHECK (age >= 0)
+);
+
+--alter
+alter table books add column city varchar(255);
+alter table books drop column city;
+alter table books rename column title to title_name;
+alter table books modify pages bigint;
+alter table books change pages page int;
+ALTER TABLE books ADD CONSTRAINT page CHECK (page >= 0);
+
+--Relationship code:
+--one to one
+--one to many
+--many to many
+
+
+CREATE TABLE customers (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    first_name VARCHAR(50),
+    last_name VARCHAR(50),
+    email VARCHAR(50)
+);
+ 
+CREATE TABLE orders (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    order_date DATE,
+    amount DECIMAL(8,2),
+    customer_id INT,
+    FOREIGN KEY (customer_id) REFERENCES customers(id)
+);
+ 
+INSERT INTO customers (first_name, last_name, email) 
+VALUES ('Boy', 'George', 'george@gmail.com'),
+       ('George', 'Michael', 'gm@gmail.com'),
+       ('David', 'Bowie', 'david@gmail.com'),
+       ('Blue', 'Steele', 'blue@gmail.com'),
+       ('Bette', 'Davis', 'bette@aol.com');
+       
+       
+INSERT INTO orders (order_date, amount, customer_id)
+VALUES ('2016-02-10', 99.99, 1),
+       ('2017-11-11', 35.50, 1),
+       ('2014-12-12', 800.67, 2),
+       ('2015-01-03', 12.50, 2),
+       ('1999-04-11', 450.25, 5);
+       
+--cross joins useless
+select * from customers,orders;
+       
+--Inner Joins
+
+select * from customers join orders on customers.id = orders.customer_id;
+select first_name,last_name,sum(amount) from customers join orders on orders.customer_id = customers.id group by first_name,last_name;
+
+--left joins
+
+SELECT 
+    first_name, last_name, order_date, amount
+FROM
+    customers
+        LEFT JOIN
+    orders ON orders.customer_id = customers.id;
+    
+--if null   
+SELECT 
+    first_name, 
+    last_name, 
+    IFNULL(SUM(amount), 0) AS money_spent
+FROM
+    customers
+        LEFT JOIN
+    orders ON customers.id = orders.customer_id
+GROUP BY first_name , last_name;
+
+
+--ON delete cascade
+
+CREATE TABLE orders (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    order_date DATE,
+    amount DECIMAL(8 , 2 ),
+    customer_id INT,
+    FOREIGN KEY (customer_id)
+        REFERENCES customers (id)
+        ON DELETE CASCADE
+);
+
+--find constraint name
+SELECT CONSTRAINT_NAME
+FROM information_schema.KEY_COLUMN_USAGE
+WHERE TABLE_NAME = 'orders' AND COLUMN_NAME = 'customer_id';
+
+--alter a delete cascade
+ALTER TABLE orders
+DROP FOREIGN KEY constraint_name,
+ADD CONSTRAINT constraint_name FOREIGN KEY (customer_id)
+REFERENCES customers(id)
+ON DELETE CASCADE;
+
+
+--many to many relationship
+
+CREATE TABLE reviewers (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    first_name VARCHAR(50) NOT NULL,
+    last_name VARCHAR(50) NOT NULL
+);
+ 
+CREATE TABLE series (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    title VARCHAR(100),
+    released_year YEAR,
+    genre VARCHAR(100)
+);
+ 
+CREATE TABLE reviews (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    rating DECIMAL(2 , 1 ),
+    series_id INT,
+    reviewer_id INT,
+    FOREIGN KEY (series_id)
+        REFERENCES series (id),
+    FOREIGN KEY (reviewer_id)
+        REFERENCES reviewers (id)
+);
+ 
+INSERT INTO series (title, released_year, genre) VALUES
+    ('Archer', 2009, 'Animation'),
+    ('Arrested Development', 2003, 'Comedy'),
+    ("Bob's Burgers", 2011, 'Animation'),
+    ('Bojack Horseman', 2014, 'Animation'),
+    ("Breaking Bad", 2008, 'Drama'),
+    ('Curb Your Enthusiasm', 2000, 'Comedy'),
+    ("Fargo", 2014, 'Drama'),
+    ('Freaks and Geeks', 1999, 'Comedy'),
+    ('General Hospital', 1963, 'Drama'),
+    ('Halt and Catch Fire', 2014, 'Drama'),
+    ('Malcolm In The Middle', 2000, 'Comedy'),
+    ('Pushing Daisies', 2007, 'Comedy'),
+    ('Seinfeld', 1989, 'Comedy'),
+    ('Stranger Things', 2016, 'Drama');
+ 
+ 
+INSERT INTO reviewers (first_name, last_name) VALUES
+    ('Thomas', 'Stoneman'),
+    ('Wyatt', 'Skaggs'),
+    ('Kimbra', 'Masters'),
+    ('Domingo', 'Cortes'),
+    ('Colt', 'Steele'),
+    ('Pinkie', 'Petit'),
+    ('Marlon', 'Crafford');
+    
+ 
+INSERT INTO reviews(series_id, reviewer_id, rating) VALUES
+    (1,1,8.0),(1,2,7.5),(1,3,8.5),(1,4,7.7),(1,5,8.9),
+    (2,1,8.1),(2,4,6.0),(2,3,8.0),(2,6,8.4),(2,5,9.9),
+    (3,1,7.0),(3,6,7.5),(3,4,8.0),(3,3,7.1),(3,5,8.0),
+    (4,1,7.5),(4,3,7.8),(4,4,8.3),(4,2,7.6),(4,5,8.5),
+    (5,1,9.5),(5,3,9.0),(5,4,9.1),(5,2,9.3),(5,5,9.9),
+    (6,2,6.5),(6,3,7.8),(6,4,8.8),(6,2,8.4),(6,5,9.1),
+    (7,2,9.1),(7,5,9.7),
+    (8,4,8.5),(8,2,7.8),(8,6,8.8),(8,5,9.3),
+    (9,2,5.5),(9,3,6.8),(9,4,5.8),(9,6,4.3),(9,5,4.5),
+    (10,5,9.9),
+    (13,3,8.0),(13,4,7.2),
+    (14,2,8.5),(14,3,8.9),(14,4,8.9);
+    
+    
+    
+--Creating using view
+create view cats10 as select * from cats3;
+
+--create or replace
+create or replace view cats10 as select * from cats2;
+
+--alter view
+ALTER VIEW ordered_series AS
+SELECT * FROM series ORDER BY released_year;
+
+--drop view
+drop view cats10;
+
+--Having clause
+SELECT 
+    title, 
+    AVG(rating),
+    COUNT(rating) AS review_count
+FROM full_reviews 
+GROUP BY title HAVING COUNT(rating) > 1;
+
+--rollup creating total here avg(rating) total
+SELECT 
+    title, AVG(rating)
+FROM
+    full_reviews
+GROUP BY title WITH ROLLUP;
